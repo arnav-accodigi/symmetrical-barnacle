@@ -7,38 +7,22 @@ jobs:
   build-node:
     # Build node project
     executor: node/default
-    docker:
-      - image: cimg/base:stable
-    environment:
-      VERCEL_ORG_ID: $VERCEL_ORG_ID
     steps:
       - checkout
       - node/install-packages:
           pkg-manager: yarn
-      # - run:
-      #     command: yarn run build
-      # - run:
-      #     name: Create the ~/artifacts directory if it doesn't exist
-      #     command: mkdir -p ~/artifacts
-      # # Copy output to artifacts dir
-      # - run:
-      #     name: Copy artifacts
-      #     command: cp -R build dist public .output .next .docusaurus ~/artifacts 2>/dev/null || true
-      # - store_artifacts:
-      #     path: ~/artifacts
-      #     destination: node-build
       - run:
-          name: Install Vercel CLI
-          command: yarn add --global vercel@latest
+          command: yarn run build
       - run:
-          name: Pull Vercel Environment Information
-          command: vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
+          name: Create the ~/artifacts directory if it doesn't exist
+          command: mkdir -p ~/artifacts
+      # Copy output to artifacts dir
       - run:
-          name: Build Project Artifacts
-          command: vercel build --token=$VERCEL_TOKEN
-      - run:
-          name: Deploy Project Artifacts to Vercel
-          command: vercel deploy --prebuilt --token=$VERCEL_TOKEN
+          name: Copy artifacts
+          command: cp -R build dist public .output .next .docusaurus ~/artifacts 2>/dev/null || true
+      - store_artifacts:
+          path: ~/artifacts
+          destination: node-build
 workflows:
   build-deploy:
     jobs:
